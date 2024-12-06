@@ -1,8 +1,9 @@
 import { Geometry, Base, Subtraction } from "@react-three/csg";
 import { useTexture } from "@react-three/drei";
-import { BoxCoords } from "./types";
+import { RackBoxProps } from "./types";
+import { boxSizeX, boxSizeY, boxSizeZ } from "./constants";
 
-export const RackBox = ({ coords, boxSizeX, boxSizeY, boxSizeZ }: BoxCoords) => {
+export const RackBox = ({ coords }: RackBoxProps) => {
   const texture = useTexture('metal-tread-1.png');
 
   const boxSideWidth = 0.2;
