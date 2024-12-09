@@ -1,39 +1,37 @@
 import './App.css'
 
 
-import { AssetItemProps, RackBoxProps } from './types';
+import { AssetDataType, RackBoxProps, RackProps } from './types';
 import { RackBox } from './RackBox';
 import { AssetItem } from './AssetItem';
-import { assetSizeHeight, boxSizeX, boxSizeY } from './constants';
+import { assetPositionZ, assetSizeHeight, boxSizeX, boxSizeY } from './constants';
 
-export const Rack = ({ boxNumberX, boxNumberY }: { boxNumberX: number; boxNumberY: number; }) => {
+export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelectedAsset }: RackProps) => {
   const rackX = -boxNumberX * boxSizeX / 2;
   const rackZ = 0;
 
-  const numberOfRows = Array.from({ length: boxNumberX }, (_, x) => x);
-  const numberOfColumns = Array.from({ length: boxNumberY }, (_, y) => y);
+  const numberOfRows = Array.from({ length: boxNumberX }, (_, x) => x + 1);
+  const numberOfColumns = Array.from({ length: boxNumberY }, (_, y) => y + 1);
 
-  const rack: Array<RackBoxProps> = numberOfRows.flatMap((x) => (
+  const rackBoxes: Array<RackBoxProps> = numberOfRows.flatMap((x) => (
     numberOfColumns.map((y) => (
       { id: `${Math.random()}`, coords: [rackX + (x * boxSizeX), y * boxSizeY, rackZ] }
     ))
   ));
 
 
-  const assets: Array<AssetItemProps> = numberOfRows.flatMap((x) => (
-    numberOfColumns.flatMap((y) => (
-      [
-        { id: `${Math.random()}`, coords: [rackX + (x * boxSizeX), y * boxSizeY, -(assetSizeHeight / 1.9)] },
-        { id: `${Math.random()}`, coords: [rackX + (x * boxSizeX), y * boxSizeY, (assetSizeHeight / 1.9)] },
-      ]
-    ))
-  ));
-
+  const assetItems: Array<AssetDataType> = assets.map((asset) => {
+    const [ x, y, z ]  = asset.coords;
+    return {
+      ...asset,
+      coords: [rackX + (x * boxSizeX), y * boxSizeY, z === 1 ? -(assetPositionZ) : (assetPositionZ)]
+    };
+  });
 
   return (
     <>
       {
-        rack.map((rackBox) => (
+        rackBoxes.map((rackBox) => (
           <RackBox
             key={rackBox.id}
             { ...rackBox }
@@ -42,10 +40,12 @@ export const Rack = ({ boxNumberX, boxNumberY }: { boxNumberX: number; boxNumber
       }
 
       {
-        assets.map((asset) => (
+        assetItems.map((asset) => (
             <AssetItem
               key={asset.id}
               { ...asset }
+              selected={selectedAsset?.id === asset.id}
+              onClick={setSelectedAsset}
             />
           )
         )

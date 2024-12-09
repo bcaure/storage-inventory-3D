@@ -1,29 +1,37 @@
 import { useFrame } from "@react-three/fiber";
-import { useRef, Ref } from "react";
+import { useRef, useState } from "react";
+import { AnimatedCameraProps } from "./types";
+import { PerspectiveCamera as PerspectiveCameraType, Vector3 } from "three";
 import { PerspectiveCamera } from "@react-three/drei";
-import * as three from 'three';
-import { Coords } from "./types";
 
-export const AnimatedCamera = ({ initPosition, position }: { initPosition: Coords, position: Coords }) => {
-  const cameraRef = useRef<three.PerspectiveCamera>();
-  const vector = new three.Vector3();
+export const AnimatedCamera = ({ position, target }: AnimatedCameraProps) => {
+  const cameraRef = useRef<PerspectiveCameraType>(null);
+  const vector = new Vector3();
 
-  // Keep camera looking at the origin
+  const [firstRender, setFirstRender] = useState(true);
+
+  // Keep camera looking at the target
   useFrame(() => {
-    if (cameraRef.current) {
-      const camera = (cameraRef.current as three.PerspectiveCamera);
-      camera.position.lerp(vector.set(...position), 0.01);
+    if (cameraRef.current && position && target) {
+      cameraRef.current?.lookAt(new Vector3(target[0], target[1], target[2]));
+      if (firstRender) {
+        cameraRef.current?.position.set(position[0], position[1], position[2]);
+        setFirstRender(false);
+      } else {
+        cameraRef.current?.position.set(position[0], position[1], position[2]);
+        // cameraRef.current?.position.lerp(vector.set(...position), 0.01);
+      }
     }
   });
 
   return (
     <PerspectiveCamera
-      ref={cameraRef as unknown as Ref<three.PerspectiveCamera>}
-      makeDefault // This sets the camera as the default camera for the scene
-      fov={20} // Field of view
+      ref={cameraRef}
+      makeDefault
+      fov={80} // Field of view
       near={0.1} // Near clipping plane
       far={1000} // Far clipping plane
-      position={initPosition}
+      zoom={1.5}
     />
   );
 }
