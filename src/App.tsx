@@ -3,6 +3,7 @@ import { Dropdown } from "flowbite-react";
 import { Scene } from "./Scene";
 import { AlertLog } from "./AlertLog";
 import { DataContextProvider } from "./shared/DataContextProvider";
+import { EventForm } from "./EventForm";
 
 export const App = () => {
   const rackLetters = useMemo(() => ['A', 'B', 'E', 'F', 'G', 'S', 'W'], []);
@@ -18,7 +19,7 @@ export const App = () => {
 
   return (
     <DataContextProvider>
-      <main className="bg-gray-900 w-screen h-screen truncate">
+      <main className="bg-gray-900 w-screen h-screen truncate dark">
         <h1 className="ml-8 mt-5 text-5xl font-extrabold text-white">
           TIR ALERTING <small className="ms-2 font-semibold text-gray-400">[Usine de Cholet]</small>
         </h1>
@@ -28,8 +29,9 @@ export const App = () => {
           </Dropdown>
         </section>
         { currentLetter && <Scene currentLetter={currentLetter} /> }
-        <section className="w-full flex justify-center">
+        <section className="w-full flex justify-evenly">
           <AlertLog />
+          <EventForm />
         </section>
       </main>
     </DataContextProvider>

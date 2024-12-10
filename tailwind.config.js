@@ -2,6 +2,7 @@
 const flowbite = require("flowbite-react/tailwind");
 
 export default {
+  dark: "selector",
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
