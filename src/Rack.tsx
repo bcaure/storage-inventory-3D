@@ -5,17 +5,18 @@ import { AssetDataType, RackBoxProps, RackProps } from './types';
 import { RackBox } from './RackBox';
 import { AssetItem } from './AssetItem';
 import { assetPositionZ, assetSizeHeight, boxSizeX, boxSizeY } from './constants';
+import { Text } from '@react-three/drei';
 
 export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelectedAsset }: RackProps) => {
-  const rackX = -boxNumberX * boxSizeX / 2;
+  const rackXY = (x: number, y: number): [number, number] => [-boxNumberX * boxSizeX / 2 + (x * boxSizeX), y * boxSizeY];
   const rackZ = 0;
 
-  const numberOfRows = Array.from({ length: boxNumberX }, (_, x) => x + 1);
-  const numberOfColumns = Array.from({ length: boxNumberY }, (_, y) => y + 1);
+  const columns = Array.from({ length: boxNumberX }, (_, x) => x + 1);
+  const rows = Array.from({ length: boxNumberY }, (_, y) => y + 1);
 
-  const rackBoxes: Array<RackBoxProps> = numberOfRows.flatMap((x) => (
-    numberOfColumns.map((y) => (
-      { id: `${Math.random()}`, coords: [rackX + (x * boxSizeX), y * boxSizeY, rackZ] }
+  const rackBoxes: Array<RackBoxProps> = columns.flatMap((x) => (
+    rows.map((y) => (
+      { id: `${Math.random()}`, coords: [...rackXY(x, y), rackZ] }
     ))
   ));
 
@@ -24,7 +25,7 @@ export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelecte
     const [ x, y, z ]  = asset.coords;
     return {
       ...asset,
-      coords: [rackX + (x * boxSizeX), y * boxSizeY, z === 1 ? -(assetPositionZ) : (assetPositionZ)]
+      coords: [...rackXY(x, y), z === 1 ? -(assetPositionZ) : (assetPositionZ)]
     };
   });
 
@@ -49,6 +50,28 @@ export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelecte
             />
           )
         )
+      }
+      {
+        columns.map((column) => (
+          <Text
+            position={[...rackXY(column, boxNumberY + 1), assetSizeHeight + 0.2]}
+            color="white"
+            fontSize={1}
+          >
+            {column}
+          </Text>
+        ))
+      }
+      {
+        rows.map((row) => (
+          <Text
+            position={[...rackXY(0, row), assetSizeHeight + 0.2]}
+            color="white"
+            fontSize={1}
+          >
+            {row}
+          </Text>
+        ))
       }
     </>
   )

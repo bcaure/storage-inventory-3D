@@ -13,13 +13,13 @@ export const AnimatedCamera = ({ position, target }: AnimatedCameraProps) => {
   // Keep camera looking at the target
   useFrame(() => {
     if (cameraRef.current && position && target) {
-      cameraRef.current?.lookAt(new Vector3(target[0], target[1], target[2]));
+      //cameraRef.current?.lookAt(new Vector3(target[0], target[1], target[2]));
       if (firstRender) {
         cameraRef.current?.position.set(position[0], position[1], position[2]);
         setFirstRender(false);
       } else {
-        cameraRef.current?.position.set(position[0], position[1], position[2]);
-        // cameraRef.current?.position.lerp(vector.set(...position), 0.01);
+        // cameraRef.current?.position.set(position[0], position[1], position[2]);
+        cameraRef.current?.position.lerp(vector.set(...position), 0.1);
       }
     }
   });
@@ -31,7 +31,7 @@ export const AnimatedCamera = ({ position, target }: AnimatedCameraProps) => {
       fov={80} // Field of view
       near={0.1} // Near clipping plane
       far={1000} // Far clipping plane
-      zoom={1.5}
+      zoom={1}
     />
   );
 }
