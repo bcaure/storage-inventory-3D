@@ -1,22 +1,24 @@
 import './App.css'
 
 import { Canvas } from '@react-three/fiber'
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
-import { AssetDataType, Coords, TracksphereResponse } from './types';
+import { AssetDataType, Coords } from './shared/types';
 import { AnimatedCamera } from './AnimatedCamera';
 import { Rack } from './Rack';
-import { assetPositionZ, boxSizeX, boxSizeY, camMovement, ERRORS, WARNINGS } from './constants';
+import { assetPositionZ, boxSizeX, boxSizeY, camMovement } from './shared/constants';
 import { DirectionalLight } from 'three';
 import { ButtonsGroup } from './shared/ButtonsGroup';
+import { DataContext } from './shared/DataContext';
 
 export const Scene = ({ currentLetter }: { currentLetter: string }) => {
-  const [locations, setLocations] = useState<TracksphereResponse>();
+  const dataContext = useContext(DataContext);
+  const [assets] = [dataContext.assets, dataContext.events];
+
+  const [rackAssets, setRackAssets] = useState(new Array<AssetDataType>());
 
   const [boxNumberX, setBoxNumberX] = useState<number>();
   const [boxNumberY, setBoxNumberY] = useState<number>();
-
-  const [assets, setAssets] = useState<Array<AssetDataType>>();
 
   const [camPosition, setCamPosition] = useState<Coords>();
   const [camTarget, setCamTarget] = useState<Coords>();
@@ -37,76 +39,37 @@ export const Scene = ({ currentLetter }: { currentLetter: string }) => {
     }
   };
 
-
-
   useEffect(() => {
-    const fetchLocations = async () => {
-      const response = await fetch('/locations-tracksphere-cho.json');
-      const responseLocations = await response.json() as TracksphereResponse;
-      setLocations(responseLocations);
-    }
-    fetchLocations();
-  }, []);
-
-  useEffect(() => {
-    if (currentLetter && locations) {
+    if (currentLetter) {
       let maxX: number | undefined = undefined;
       let maxY: number | undefined = undefined;
 
-      const locationAssets = new Array<AssetDataType>();
-
-      for (const location of locations.data.rows) {
-        const name = location.name.substring('location '.length);
-        const x = parseInt(name.substring(1, 3));
-        const y = parseInt(name.substring(3, 4));
-    
-        if (!Number.isNaN(x) && !Number.isNaN(y)) {
-          if (name.startsWith(currentLetter)) {
-            const computeState = (coords: Coords): 'error' | 'warning' | 'correct' => {
-              const hasCoords = (list: number[][]) => list.some(([x, y, z]) => coords[0] === x && coords[1] === y && coords[2] === z);
-              if (hasCoords(ERRORS)) {
-                return 'error';
-              } else if (hasCoords(WARNINGS)) {
-                return 'warning';
-              } else {
-                return 'correct';
-              }
-            };
-
-            const coords0: Coords = [x, y, 0];
-            locationAssets.push({
-              id: `${location.id}-0`,
-              name,
-              coords: coords0,
-              state: computeState(coords0),
-            });
-
-            const coords1: Coords = [x, y, 1];
-            locationAssets.push({
-              id: `${location.id}-1`,
-              name,
-              coords: coords1,
-              state: computeState(coords1),
-            });
-
+      const currentRackAssets = new Array<AssetDataType>();
+      for (const asset of assets) {
+        if (asset.name.startsWith(currentLetter)) {
+          currentRackAssets.push(asset);
+          const [x, y] = asset.coords;
+          if (asset.name.startsWith(currentLetter)) {
             maxX = !maxX || x > maxX ? x : maxX;
             maxY = !maxY || y > maxY ? y : maxY;
           }
         }
       }
 
+      setRackAssets(currentRackAssets);
+
       // LOAD ASSETS DATA
       if (maxX && maxY) {
         setBoxNumberX(maxX);
         setBoxNumberY(maxY);
-        setAssets(locationAssets);
 
         // CAMERA
         setCamPosition(initCamPosition(maxX, maxY));
         setCamTarget(initCamTarget(maxX, maxY));
       }
     }
-  }, [currentLetter, locations]);
+  }, [assets, currentLetter]);
+
 
   const directionalLight = useRef<DirectionalLight>(null);
 
@@ -190,7 +153,7 @@ export const Scene = ({ currentLetter }: { currentLetter: string }) => {
               <Rack
                 boxNumberX={boxNumberX}
                 boxNumberY={boxNumberY}
-                assets={assets}
+                assets={rackAssets}
                 selectedAsset={selectedAsset}
                 setSelectedAsset={onAssetSelect}
               />

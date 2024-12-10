@@ -1,7 +1,7 @@
 import { Geometry, Base, Addition } from "@react-three/csg";
 import { useTexture, Text } from "@react-three/drei";
-import { AssetItemProps } from "./types";
-import { assetSizeHeight, assetSizeDiam } from "./constants";
+import { AssetItemProps } from "./shared/types";
+import { assetSizeHeight, assetSizeDiam } from "./shared/constants";
 import { Mesh } from "three";
 import { useRef } from "react";
 

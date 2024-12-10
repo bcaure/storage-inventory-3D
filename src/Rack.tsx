@@ -1,10 +1,10 @@
 import './App.css'
 
 
-import { AssetDataType, RackBoxProps, RackProps } from './types';
+import { AssetDataType, RackBoxProps, RackProps } from './shared/types';
 import { RackBox } from './RackBox';
 import { AssetItem } from './AssetItem';
-import { assetPositionZ, assetSizeHeight, boxSizeX, boxSizeY } from './constants';
+import { assetPositionZ, assetSizeHeight, boxSizeX, boxSizeY } from './shared/constants';
 import { Text } from '@react-three/drei';
 
 export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelectedAsset }: RackProps) => {
@@ -54,6 +54,7 @@ export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelecte
       {
         columns.map((column) => (
           <Text
+            key={column}
             position={[...rackXY(column, boxNumberY + 1), assetSizeHeight + 0.2]}
             color="white"
             fontSize={1}
@@ -65,6 +66,7 @@ export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelecte
       {
         rows.map((row) => (
           <Text
+            key={row}
             position={[...rackXY(0, row), assetSizeHeight + 0.2]}
             color="white"
             fontSize={1}

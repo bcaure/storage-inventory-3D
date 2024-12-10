@@ -1,6 +1,6 @@
 import { useFrame } from "@react-three/fiber";
 import { useRef, useState } from "react";
-import { AnimatedCameraProps } from "./types";
+import { AnimatedCameraProps } from "./shared/types";
 import { PerspectiveCamera as PerspectiveCameraType, Vector3 } from "three";
 import { PerspectiveCamera } from "@react-three/drei";
 

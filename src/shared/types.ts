@@ -39,14 +39,26 @@ export type AnimatedCameraProps = {
 /// TRACKSPHERE
 
 export type TracksphereResponse = {
-  "data": {
-    "count": number;
-    "rows": Array<{
-      "id": string;
-      "name": string;
-      "elementType": {
-        "name": string;
+  data: {
+    count: number;
+    rows: Array<{
+      id: string;
+      name: string;
+      code: string; 
+      elementType: {
+        name: string;
       };
     }>;
   }
 };
+
+export type TracksphereEvent = {
+  id: string;
+  locationCode: string;
+  type: "out" | "in";
+  assetCode: string;
+  productCode: string;
+  date: Date;
+};
+
+
