@@ -11,11 +11,13 @@ export type RackBoxProps = {
   id: string;
 };
 
+export type AssetStateType = 'error' | 'warning' | 'correct' | 'transparent-error' | 'transparent-warning' | 'transparent-correct';
+
 export type AssetDataType = {
   id: string;
   name: string;
   coords: Coords;
-  state: 'error' | 'warning' | 'correct';
+  state: AssetStateType;
 };
 
 export type AssetItemProps = AssetDataType & {
