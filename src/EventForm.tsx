@@ -1,18 +1,18 @@
 import React, { useContext, useState } from "react";
 import { DataContext } from "./shared/DataContext";
+import { Input } from "./shared/Input";
 
 export const EventForm = () => {
-  const {events, setEvents, assets } = useContext(DataContext);
+  const {events, setEvents } = useContext(DataContext);
 
-  const locationOptions = assets;
   const productOptions = ["TG25948", "MM26092BGJ", "BM11120", "CJ44130"];
   const assetOptions = ["331854AAC000060000000034", "331854AAC000060000000005", "331854AAC00006000000000B", "331854AAC000060000000048", "331854AAC000060000000052", ];
 
   const [formData, setFormData] = useState({
     locationCode: "",
     type: "out",
-    assetCode: "",
-    productCode: "",
+    assetCode: assetOptions[0],
+    productCode: productOptions[0],
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
@@ -48,19 +48,14 @@ export const EventForm = () => {
       <form onSubmit={handleSubmit} className="gap-4 grid grid-cols-2">
         <div>
           <label className="block mb-1 text-sm font-medium">Location Code</label>
-          <select
+          <Input
+            type="text"
             name="locationCode"
             value={formData.locationCode}
             onChange={handleInputChange}
             className="w-full p-2 border border-gray-700 rounded bg-gray-800 text-gray-100"
-          >
-            <option value="">Select Location</option>
-            {locationOptions.map((location) => (
-              <option key={location.id} value={location.name}>
-                {location.name}
-              </option>
-            ))}
-          </select>
+            placeholder="A123-0"
+          />
         </div>
 
         <div>
@@ -84,7 +79,6 @@ export const EventForm = () => {
             onChange={handleInputChange}
             className="w-full p-2 border border-gray-700 rounded bg-gray-800 text-gray-100"
           >
-            <option value="">Select Asset</option>
             {assetOptions.map((asset) => (
               <option key={asset} value={asset}>
                 {asset}
@@ -101,7 +95,6 @@ export const EventForm = () => {
             onChange={handleInputChange}
             className="w-full p-2 border border-gray-700 rounded bg-gray-800 text-gray-100"
           >
-            <option value="">Select Product</option>
             {productOptions.map((product) => (
               <option key={product} value={product}>
                 {product}
