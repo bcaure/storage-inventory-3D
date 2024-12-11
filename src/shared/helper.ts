@@ -14,5 +14,8 @@ export const computeState = (code: string, codeBehind?: string): AssetStateType 
   }
 };
 
-export const rackXY = (x: number, y: number, boxNumberX: number): [number, number] => [-boxNumberX * boxSizeX / 2 + (x * boxSizeX), y * boxSizeY];
+export const rackXY = (x: number, y: number, boxNumberX: number): [number, number] => [
+  -boxNumberX * boxSizeX / 2 + (x * boxSizeX),
+  y * boxSizeY
+];
 

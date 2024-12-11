@@ -4,6 +4,7 @@ import { TracksphereEvent } from "./types";
 export const boxSizeX = 3;
 export const boxSizeY = 3;
 export const boxSizeZ = 3;
+export const frameSideWidth = 0.2;
 export const camMovement = 6;
 
 // ASSETS

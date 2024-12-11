@@ -1,18 +1,19 @@
-import { Geometry, Base, Addition } from "@react-three/csg";
+import { Geometry, Base, Addition, Subtraction } from "@react-three/csg";
 import { useTexture, Text } from "@react-three/drei";
 import { AssetItemProps, Coords } from "./shared/types";
-import { assetSizeHeight, assetSizeDiam } from "./shared/constants";
-import { Mesh } from "three";
-import { useRef } from "react";
+import { assetSizeHeight, assetSizeDiam, boxSizeX, boxSizeY } from "./shared/constants";
+import { Mesh, TextureLoader } from "three";
+import { useMemo, useRef } from "react";
+import { useLoader } from "@react-three/fiber";
 
 export const AssetItem = (props: AssetItemProps) => {
   const { coords, name, state, onClick } = props;
-  const textureRubber = useTexture('rubber.png');
-  const textureMetal = useTexture('metal-smooth.png');
+  const textureRubber = useLoader(TextureLoader, 'rubber.png');
+  const textureMetal = useLoader(TextureLoader, 'metal-smooth.png');
 
   const assetFront = useRef<Mesh>(null);
 
-  const flancWidth = 0.05;
+  const flancWidth = 0.08;
 
   const displayName = () => {
     onClick(props);
@@ -22,7 +23,7 @@ export const AssetItem = (props: AssetItemProps) => {
   let transparency: boolean | undefined = false;
   let opacity: number | undefined = 1;
 
-  const frontCoords: Coords = [coords[0], coords[1], assetSizeHeight + 0.2];
+  const frontCoords: Coords = [-boxSizeX / 2, -boxSizeY / 2, assetSizeHeight + 0.2];
 
   const reactAreaLight = <pointLight position={frontCoords} intensity={1000} color="#fff" castShadow />;
   let light = <></>;
@@ -60,26 +61,45 @@ export const AssetItem = (props: AssetItemProps) => {
       break;
   }
 
+  const wheel = useMemo(() => (
+    <>
+      <Geometry>
+        <Base position={[0, 0, 0]} receiveShadow>
+          <torusGeometry args={[assetSizeDiam, flancWidth]} />
+        </Base>
+        <Addition position={[0, 0, 0]} receiveShadow>
+          <boxGeometry args={[assetSizeDiam * 2, assetSizeDiam / 3, flancWidth]} />
+        </Addition>
+        <Addition position={[0, 0, 0]} rotation={[0, 0, Math.PI / 3]} receiveShadow>
+          <boxGeometry args={[assetSizeDiam * 2, assetSizeDiam / 3, flancWidth]} />
+        </Addition>
+        <Addition position={[0, 0, 0]} rotation={[0, 0, Math.PI * 2 / 3]} receiveShadow>
+          <boxGeometry args={[assetSizeDiam * 2, assetSizeDiam / 3, flancWidth]} />
+        </Addition>
+        <Addition position={[0, 0, 0.01]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
+          <cylinderGeometry args={[assetSizeDiam / 2, assetSizeDiam / 2, flancWidth]} />
+        </Addition>
+      </Geometry>
+      <meshBasicMaterial
+        map={textureMetal}
+        color={color}
+        transparent={transparency}
+        opacity={opacity}
+      />
+    </>
+  ), [color, opacity, textureMetal, transparency]);
+
   return (
-    <group onClick={displayName} receiveShadow>
-      <mesh ref={assetFront} position={coords} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
-        <Geometry>
-          <Base position={[0, (assetSizeHeight / 2), 0]} receiveShadow>
-            <cylinderGeometry args={[assetSizeDiam, assetSizeDiam, flancWidth]} />
-          </Base>
-          <Addition position={[0, -(assetSizeHeight / 2), 0]} receiveShadow>
-            <cylinderGeometry args={[assetSizeDiam, assetSizeDiam, flancWidth]} />
-          </Addition>
-        </Geometry>
-        
-        <meshBasicMaterial
-          map={textureMetal}
-          color={color}
-          transparent={transparency}
-          opacity={opacity}
-        />
+    <group position={[coords[0], coords[1], coords[2]]} onClick={displayName} receiveShadow>
+      <mesh ref={assetFront} position={[-boxSizeX / 2, -boxSizeY / 2, coords[2]]} receiveShadow>
+        { wheel }
       </mesh>
-      <mesh position={coords} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
+
+      <mesh ref={assetFront} position={[-boxSizeX / 2, -boxSizeY / 2, -coords[2]]} receiveShadow>
+        { wheel }
+      </mesh>
+
+      <mesh position={[-boxSizeX / 2, -boxSizeY / 2, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
         <cylinderGeometry args={[assetSizeDiam / 1.5, assetSizeDiam / 1.5, assetSizeHeight]} />
         <meshBasicMaterial
           map={textureRubber}
@@ -94,4 +114,4 @@ export const AssetItem = (props: AssetItemProps) => {
       {light}
     </group>
   );
-  };
+};

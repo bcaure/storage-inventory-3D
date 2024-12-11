@@ -1,42 +1,58 @@
 import './App.css'
 
 
-import { AssetDataType, RackBoxProps, RackProps } from './shared/types';
-import { RackBox } from './RackBox';
+import { AssetDataType, RackFrameProps, RackProps } from './shared/types';
+import { RackFrame } from './RackFrame';
 import { AssetItem } from './AssetItem';
-import { assetPositionZ, assetSizeHeight } from './shared/constants';
+import { assetPositionZ, assetSizeHeight, boxSizeX, boxSizeZ, frameSideWidth, boxSizeY } from './shared/constants';
 import { Text } from '@react-three/drei';
 import { rackXY } from './shared/helper';
 
 export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelectedAsset }: RackProps) => {
-  const rackZ = 0;
+  const rackZ = -boxSizeZ / 2;
 
-  const columns = Array.from({ length: boxNumberX }, (_, x) => x + 1);
-  const rows = Array.from({ length: boxNumberY }, (_, y) => y + 1);
+  const columns = Array.from({ length: boxNumberX + 1 }, (_, x) => x);
+  const rows = Array.from({ length: boxNumberY + 1 }, (_, y) => y);
 
-  const rackBoxes: Array<RackBoxProps> = columns.flatMap((x) => (
-    rows.map((y) => (
-      { id: `${Math.random()}`, coords: [...rackXY(x, y, boxNumberX), rackZ] }
-    ))
-  ));
+  const verticalFrames: Array<RackFrameProps> = columns.flatMap((x) => [
+    { id: `${Math.random()}`, coords: [rackXY(x, 0, boxNumberX)[0], 0, rackZ], type: 'vertical', boxNumberX, boxNumberY },
+    { id: `${Math.random()}`, coords: [rackXY(x, 0, boxNumberX)[0], 0, rackZ + (boxSizeZ)], type: 'vertical', boxNumberX, boxNumberY }
+  ]);
 
+  const horizontalFrames: Array<RackFrameProps> = rows.flatMap((y) => [
+    { id: `${Math.random()}`, coords: [0, rackXY(0, y, 0)[1], rackZ], type: 'horizontal', boxNumberX, boxNumberY },
+    { id: `${Math.random()}`, coords: [0, rackXY(0, y, 0)[1], rackZ + boxSizeZ], type: 'horizontal', boxNumberX, boxNumberY }
+  ]);
+
+  const transversalFrames: Array<RackFrameProps> = columns.flatMap((x) => rows.map((y) => (
+    { id: `${Math.random()}`, coords: [rackXY(x, y, boxNumberX)[0], rackXY(x, y, boxNumberX)[1], rackZ], type: 'transversal', boxNumberX, boxNumberY }
+  )));
 
   const assetItems: Array<AssetDataType> = assets.map((asset) => {
     const [ x, y, z ]  = asset.coords;
     return {
       ...asset,
-      coords: [...rackXY(x, y, boxNumberX), z === 1 ? -(assetPositionZ) : (assetPositionZ)]
+      coords: [...rackXY(x, y, boxNumberX), z === 1 ? -(assetPositionZ) : (assetPositionZ)],
     };
   });
 
   return (
     <>
       {
-        rackBoxes.map((rackBox) => (
-          <RackBox
-            key={rackBox.id}
-            { ...rackBox }
-          />
+        verticalFrames.map((verticalFrame) => (
+          <RackFrame key={verticalFrame.id} { ...verticalFrame } />
+        ))
+      }
+
+      {
+        horizontalFrames.map((horizontalFrame) => (
+          <RackFrame key={horizontalFrame.id} { ...horizontalFrame } />
+        ))
+      }
+
+      {
+        transversalFrames.map((transversalFrame) => (
+          <RackFrame key={transversalFrame.id} { ...transversalFrame } />
         ))
       }
 
@@ -54,28 +70,34 @@ export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelecte
 
       { /* Columns and rows number */ }
       {
-        columns.map((column) => (
-          <Text
-            key={column}
-            position={[...rackXY(column, 0, boxNumberX), assetSizeHeight + 0.2]}
-            color="white"
-            fontSize={1}
-          >
-            {column}
-          </Text>
-        ))
+        columns.slice(1).map((column) => {
+          const xy = rackXY(column, -0.2, boxNumberX);
+          return (
+            <Text
+              key={column}
+              position={[xy[0] - boxSizeX / 2, xy[1], assetSizeHeight + 0.2 + 2 * frameSideWidth]}
+              color="white"
+              fontSize={1}
+            >
+              {column}
+            </Text>
+          );
+        })
       }
       {
-        rows.map((row) => (
-          <Text
-            key={row}
-            position={[...rackXY(0, row, boxNumberX), assetSizeHeight + 0.2]}
-            color="white"
-            fontSize={1}
-          >
-            {row}
-          </Text>
-        ))
+        rows.slice(1).map((row) => {
+          const xy = rackXY(-0.2, row, boxNumberX);
+          return (
+            <Text
+              key={row}
+              position={[xy[0], xy[1] - boxSizeY / 2, assetSizeHeight + 0.2 + 2 * frameSideWidth]}
+              color="white"
+              fontSize={1}
+            >
+              {row}
+            </Text>
+          );
+        })
       }
     </>
   )

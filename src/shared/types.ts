@@ -6,9 +6,12 @@ export type ShapeProps = {
   boxSizeZ: number;
 };
 
-export type RackBoxProps = {
+export type RackFrameProps = {
   coords: Coords;
+  type: 'horizontal' | 'vertical' | 'transversal';
   id: string;
+  boxNumberX: number;
+  boxNumberY: number;
 };
 
 export type AssetStateType = 'error' | 'warning' | 'correct' | 'transparent-error' | 'transparent-warning' | 'transparent-correct';
