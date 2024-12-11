@@ -19,7 +19,7 @@ export const RackBox = ({ coords }: RackBoxProps) => {
   const boxSubstrZ = boxSizeZ + substrWidth;
 
   return (
-    <mesh position={coords}>
+    <mesh position={coords} receiveShadow>
       <Geometry>
         <Base>
           <boxGeometry args={[boxSizeX, boxSizeY, boxSizeZ]} />

@@ -8,17 +8,17 @@ export const camMovement = 6;
 
 // ASSETS
 export const assetSizeDiam = boxSizeX / 2.1;
-export const assetSizeHeight = boxSizeZ / 2.2;
+export const assetSizeHeight = boxSizeZ / 3;
 export const assetPositionZ = assetSizeHeight / 1.9;
 
 // DATA
 export const ERRORS = [
-  [13, 4, 1],
-  [1, 2, 0],
+  'A134-1',
+  'A012-0',
 ];
 export const WARNINGS = [
-  [5, 3, 1],
-  [7, 2, 0],
+  'A53-1',
+  'A72-0',
 ];
 
 export const EVENTS: Array<TracksphereEvent> = [
