@@ -103,8 +103,10 @@ export const Scene = ({ currentLetter }: { currentLetter: string }) => {
 
   const onNavigateClick = (x: number, y: number, z: number) => {
     if (camPosition && camTarget) {
-      setCamPosition([camPosition[0] + x, camPosition[1] + y, camPosition[2] + z]);
-      setCamTarget([camPosition[0] + x, camPosition[1] + y, camPosition[2] + z]);
+      const camZ = camPosition[2] + z < 1 ? camPosition[2] : camPosition[2] + z;
+
+      setCamPosition([camPosition[0] + x, camPosition[1] + y, camZ]);
+      setCamTarget([camPosition[0] + x, camPosition[1] + y, camZ]);
     }
   };
 
