@@ -6,7 +6,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { AssetDataType, Coords } from './shared/types';
 import { AnimatedCamera } from './AnimatedCamera';
 import { Rack } from './Rack';
-import { assetPositionZ, boxSizeX, boxSizeY, camMovement } from './shared/constants';
+import { assetPositionZ, boxSizeY, camMovement } from './shared/constants';
 import { DirectionalLight } from 'three';
 import { ButtonsGroup } from './shared/ButtonsGroup';
 import { DataContext } from './shared/DataContext';
@@ -23,9 +23,18 @@ export const Scene = ({ currentLetter }: { currentLetter: string }) => {
   const [camPosition, setCamPosition] = useState<Coords>();
   const [camTarget, setCamTarget] = useState<Coords>();
 
-  const initCamPosition = (rackSizeX: number | undefined, rackSizeY: number | undefined) => {
+  const initCamPosition = (rackSizeX: number | undefined, rackSizeY: number | undefined, canvasWidth: number, canvasHeight: number) => {
     if (rackSizeX && rackSizeY) {
-      return [0, (rackSizeY * boxSizeY) / 2, (rackSizeX * boxSizeX / 3.5)] as Coords;
+      // Position the camera so it can show the whole rack
+      const canvaRatio = canvasWidth / canvasHeight;
+      const rackRatio = rackSizeX / rackSizeY;
+      if (rackRatio > canvaRatio) {
+        // rack width is the limiter
+        return [0, (rackSizeY * boxSizeY) / 2, (rackSizeX / canvaRatio) * 2.5] as Coords;
+      } else {
+        // rack height is the limiter
+        return [0, (rackSizeY * boxSizeY) / 2, (rackSizeY / canvaRatio) * 15] as Coords;
+      }
     } else {
       throw new Error('Impossible to position camera without rack size');
     }
@@ -62,13 +71,18 @@ export const Scene = ({ currentLetter }: { currentLetter: string }) => {
       if (maxX && maxY) {
         setBoxNumberX(maxX);
         setBoxNumberY(maxY);
-
-        // CAMERA
-        setCamPosition(initCamPosition(maxX, maxY));
-        setCamTarget(initCamTarget(maxX, maxY));
       }
     }
   }, [assets, currentLetter]);
+
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (boxNumberX && boxNumberY && canvasContainerRef.current) {
+      // CAMERA
+      setCamPosition(initCamPosition(boxNumberX, boxNumberY, canvasContainerRef.current.offsetWidth, canvasContainerRef.current.offsetHeight));
+      setCamTarget(initCamTarget(boxNumberX, boxNumberY));
+    }
+  }, [boxNumberX, boxNumberY]);
 
 
   const directionalLight = useRef<DirectionalLight>(null);
@@ -83,7 +97,7 @@ export const Scene = ({ currentLetter }: { currentLetter: string }) => {
   };
 
   const onResetPositionClick = () => {
-    setCamPosition(initCamPosition(boxNumberX, boxNumberY));
+    setCamPosition(initCamPosition(boxNumberX, boxNumberY, canvasContainerRef.current?.offsetWidth || 0, canvasContainerRef.current?.offsetHeight || 0));
     setCamTarget(initCamTarget(boxNumberX, boxNumberY));
   };
 
@@ -95,7 +109,7 @@ export const Scene = ({ currentLetter }: { currentLetter: string }) => {
   };
 
   return (
-    <div className="my-2 flex flex-col justify-center items-center">
+    <div className="my-2 flex flex-col justify-center items-center h-full w-full max-h-full truncate">
       <ButtonsGroup
         buttonLeft={{
           id: 'reset',
@@ -125,20 +139,9 @@ export const Scene = ({ currentLetter }: { currentLetter: string }) => {
           onClick: () => onNavigateClick(camMovement, 0, 0),
         }}
       />
-      <div id="canvas-container" style={{ width: '95vw', height: '50vh' }}>
+      <div ref={canvasContainerRef} id="canvas-container" className="my-2 w-full flex-1">
         <Canvas>
           <ambientLight intensity={0.1} />
-          {
-            (camPosition && camTarget && directionalLight) && (
-              <directionalLight
-                ref={directionalLight}
-                position={camPosition}
-                color={'red'}
-                intensity={100}
-              />
-            )
-          }
-
           {
             camPosition && camTarget && (
               <>
@@ -159,7 +162,6 @@ export const Scene = ({ currentLetter }: { currentLetter: string }) => {
               />
             )
           }
-          
         </Canvas>
       </div>
     </div>

@@ -4,11 +4,11 @@ import './App.css'
 import { AssetDataType, RackBoxProps, RackProps } from './shared/types';
 import { RackBox } from './RackBox';
 import { AssetItem } from './AssetItem';
-import { assetPositionZ, assetSizeHeight, boxSizeX, boxSizeY } from './shared/constants';
+import { assetPositionZ, assetSizeHeight } from './shared/constants';
 import { Text } from '@react-three/drei';
+import { rackXY } from './shared/helper';
 
 export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelectedAsset }: RackProps) => {
-  const rackXY = (x: number, y: number): [number, number] => [-boxNumberX * boxSizeX / 2 + (x * boxSizeX), y * boxSizeY];
   const rackZ = 0;
 
   const columns = Array.from({ length: boxNumberX }, (_, x) => x + 1);
@@ -16,7 +16,7 @@ export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelecte
 
   const rackBoxes: Array<RackBoxProps> = columns.flatMap((x) => (
     rows.map((y) => (
-      { id: `${Math.random()}`, coords: [...rackXY(x, y), rackZ] }
+      { id: `${Math.random()}`, coords: [...rackXY(x, y, boxNumberX), rackZ] }
     ))
   ));
 
@@ -25,7 +25,7 @@ export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelecte
     const [ x, y, z ]  = asset.coords;
     return {
       ...asset,
-      coords: [...rackXY(x, y), z === 1 ? -(assetPositionZ) : (assetPositionZ)]
+      coords: [...rackXY(x, y, boxNumberX), z === 1 ? -(assetPositionZ) : (assetPositionZ)]
     };
   });
 
@@ -51,11 +51,13 @@ export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelecte
           )
         )
       }
+
+      { /* Columns and rows number */ }
       {
         columns.map((column) => (
           <Text
             key={column}
-            position={[...rackXY(column, boxNumberY + 1), assetSizeHeight + 0.2]}
+            position={[...rackXY(column, 0, boxNumberX), assetSizeHeight + 0.2]}
             color="white"
             fontSize={1}
           >
@@ -67,7 +69,7 @@ export const Rack = ({ boxNumberX, boxNumberY, assets, selectedAsset, setSelecte
         rows.map((row) => (
           <Text
             key={row}
-            position={[...rackXY(0, row), assetSizeHeight + 0.2]}
+            position={[...rackXY(0, row, boxNumberX), assetSizeHeight + 0.2]}
             color="white"
             fontSize={1}
           >
