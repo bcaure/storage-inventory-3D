@@ -32,7 +32,7 @@ export const App = () => {
 
         { currentLetter && <div className="flex-1 max-h-full truncate"><Scene currentLetter={currentLetter} /></div> }
 
-        <section className="w-full flex justify-evenly flex-0">
+        <section className="mt-3 w-full flex justify-evenly flex-0">
           <AlertLog />
           <EventForm />
         </section>

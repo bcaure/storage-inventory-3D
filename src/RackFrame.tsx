@@ -1,4 +1,4 @@
-import { Coords, RackFrameProps as RackFrameProps } from "./shared/types";
+import { Coords, RackFrameProps } from "./shared/types";
 import { boxSizeX, boxSizeY, boxSizeZ, frameSideWidth } from "./shared/constants";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
@@ -16,10 +16,10 @@ export const RackFrame = ({ coords, boxNumberX, boxNumberY, type }: RackFramePro
 
   switch(type) {
     case 'horizontal':
-      frameSizeX = boxNumberX * boxSizeX;
+      frameSizeX = boxNumberX * boxSizeX - boxSizeX / 2;
       frameSizeY = frameSideWidth;
       frameSizeZ = frameSideWidth;
-      frameX = coords[0];
+      frameX = coords[0] - boxSizeX / 4;
       frameY = coords[1];
       frameZ = coords[2];
       break;

@@ -2,6 +2,7 @@ import { PropsWithChildren, useEffect, useState } from "react";
 import { AssetDataType, TracksphereResponse, Coords, TracksphereEvent } from "./types";
 import { DataContext } from "./DataContext";
 import { computeState } from "./helper";
+import { boxSizeX } from "./constants";
 
 export const DataContextProvider = ({ children }: PropsWithChildren) => {
   const [assets, setAssets] = useState<Array<AssetDataType>>(new Array<AssetDataType>());
@@ -33,21 +34,20 @@ export const DataContextProvider = ({ children }: PropsWithChildren) => {
       
           if (!Number.isNaN(x) && !Number.isNaN(y)) {
 
-            // We add 1 or 2 assets: one behind and one in front.
-            // The front one has z index 0 and the back one has z index 1
+            // We add 1 or 2 assets next to each other in the same location.
             const rand = Math.random();
-            let whichAssets: 'front' | 'back' | 'both' = 'both'; 
+            let whichAssets: 'left' | 'right' | 'both' = 'both'; 
             if (rand < 0.3) {
-              whichAssets = 'front';
+              whichAssets = 'left';
             } else if (rand > 0.7) {
-              whichAssets = 'back';
+              whichAssets = 'right';
             }
 
-            const coords1: Coords = [x, y, 1];
+            const coords1: Coords = [x + boxSizeX / 4, y, 0];
             const code1 = `${code}-1`;
             const state1 = computeState(code1);
 
-            if (whichAssets !== 'front') {
+            if (whichAssets !== 'left') {
               locationAssets.push({
                 id: `${location.id}-1`,
                 name: `${code}-1`,
@@ -58,9 +58,9 @@ export const DataContextProvider = ({ children }: PropsWithChildren) => {
 
             const coords0: Coords = [x, y, 0];
             const code0 = `${code}-0`;
-            const state0 = whichAssets === 'both' ? computeState(code0, code1) : computeState(code0);
+            const state0 = computeState(code0);
 
-            if (whichAssets !== 'back') {
+            if (whichAssets !== 'right') {
               locationAssets.push({
                 id: `${location.id}-0`,
                 name: code0,

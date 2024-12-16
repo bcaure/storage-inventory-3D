@@ -28,7 +28,7 @@ export const AnimatedCamera = ({ position, target }: AnimatedCameraProps) => {
     <PerspectiveCamera
       ref={cameraRef}
       makeDefault
-      fov={80} // Field of view
+      fov={10} // Field of view
       near={0.1} // Near clipping plane
       far={1000} // Far clipping plane
       zoom={1}

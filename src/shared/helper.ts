@@ -1,16 +1,14 @@
 import { boxSizeX, boxSizeY, ERRORS, WARNINGS } from "./constants";
 import { AssetStateType } from "./types";
 
-export const computeState = (code: string, codeBehind?: string): AssetStateType => {
-  const stateBehind = codeBehind ? computeState(codeBehind) : undefined;
-  const isTransparent = stateBehind && ['error', 'warning'].includes(stateBehind);
+export const computeState = (code: string): AssetStateType => {
 
   if (ERRORS.includes(code)) {
-    return isTransparent ? 'transparent-error' : 'error';
+    return 'error';
   } else if (WARNINGS.includes(code)) {
-    return isTransparent ? 'transparent-warning' : 'warning';
+    return 'warning';
   } else {
-    return isTransparent ? 'transparent-correct' : 'correct';
+    return 'correct';
   }
 };
 

@@ -1,15 +1,15 @@
 import { TracksphereEvent } from "./types";
 
   // RACK
-export const boxSizeX = 3;
+export const boxSizeX = 6;
 export const boxSizeY = 3;
 export const boxSizeZ = 3;
-export const frameSideWidth = 0.2;
+export const frameSideWidth = 0.1;
 export const camMovement = 6;
 
 // ASSETS
-export const assetSizeDiam = boxSizeX / 2.1;
-export const assetSizeHeight = boxSizeZ / 3;
+export const assetSizeDiam = 1.4;
+export const assetSizeHeight = 2;
 export const assetPositionZ = assetSizeHeight / 1.9;
 
 // DATA

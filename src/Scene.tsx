@@ -30,10 +30,10 @@ export const Scene = ({ currentLetter }: { currentLetter: string }) => {
       const rackRatio = rackSizeX / rackSizeY;
       if (rackRatio > canvaRatio) {
         // rack width is the limiter
-        return [0, (rackSizeY * boxSizeY) / 2, (rackSizeX / canvaRatio) * 2.5] as Coords;
+        return [0, (rackSizeY * boxSizeY) / 2, (rackSizeX / canvaRatio) * 40] as Coords;
       } else {
         // rack height is the limiter
-        return [0, (rackSizeY * boxSizeY) / 2, (rackSizeY / canvaRatio) * 15] as Coords;
+        return [0, (rackSizeY * boxSizeY) / 2, (rackSizeY / canvaRatio) * 200] as Coords;
       }
     } else {
       throw new Error('Impossible to position camera without rack size');
@@ -91,7 +91,7 @@ export const Scene = ({ currentLetter }: { currentLetter: string }) => {
   const onAssetSelect = (asset: AssetDataType) => {
     setSelectedAsset(asset);
 
-    setCamPosition([asset.coords[0], asset.coords[1], assetPositionZ * 2 + 3]);
+    setCamPosition([asset.coords[0], asset.coords[1] - boxSizeY / 2, assetPositionZ * 20 + 3]);
     setCamTarget(asset.coords);
     directionalLight.current?.lookAt(asset.coords[0], asset.coords[1], asset.coords[2]);
   };
