@@ -5,7 +5,8 @@ export const boxSizeX = 6;
 export const boxSizeY = 3;
 export const boxSizeZ = 3;
 export const frameSideWidth = 0.1;
-export const camMovement = 6;
+export const camMovementXY = 10;
+export const camMovementZ = 50;
 
 // ASSETS
 export const assetSizeDiam = 1.4;

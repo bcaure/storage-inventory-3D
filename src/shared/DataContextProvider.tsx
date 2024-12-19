@@ -8,13 +8,16 @@ export const DataContextProvider = ({ children }: PropsWithChildren) => {
   const [time, setTime] = useState<Date>();
   const [rackLetter, setRackLetter] = useState<string>();
 
+
+  console.log("time", time);
+
   // Transform locations from Tracksphere to assets
   useEffect(() => {
     const fetchTimelineData = async () => {
       const response = await fetch('/timeMap-cho.json');
       const responseLocations = await response.json() as Array<TimelineDataType>;
-      setTimelineData(responseLocations);
-      setTime(responseLocations[0].date);
+      setTimelineData(responseLocations.map((r) => ({...r, date: new Date(r.date)})));
+      setTime(new Date(responseLocations[0].date));
     }
 
     const fetchRacksData = async () => {
@@ -29,9 +32,18 @@ export const DataContextProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   const currentTimeData = useMemo(() => {
-    return rackLetter ? timelineData.find((data) => data.date === time)?.data?.filter((asset) => {
-      return asset.name.startsWith(rackLetter);
-    }) : [];
+    if (rackLetter && time) {
+      const timedData = timelineData.find((data) => data.date.getTime() === time?.getTime());
+      if (timedData) {
+        return timedData?.data.filter((asset) => {
+          return asset.name.startsWith(rackLetter);
+        });
+      } else {
+        throw new Error(`No data found for this time ${time?.getTime()}`);
+      }
+    } else {
+      return [];
+    }
   }, [timelineData, time, rackLetter]);
 
   const currentRack = useMemo(() => {

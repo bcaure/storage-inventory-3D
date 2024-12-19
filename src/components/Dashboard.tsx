@@ -1,8 +1,9 @@
-import { Dropdown, Timeline } from "flowbite-react";
-import { useContext, useState, useEffect } from "react";
+import { Dropdown } from "flowbite-react";
+import { useContext } from "react";
 
 import { DataContext } from "../shared/DataContext";
 import { Scene } from "./Scene";
+import { TimelineData } from "./TimelineData";
 
 export const Dashboard = () => {
   const { racks, rackLetter, setRackLetter } = useContext(DataContext);
@@ -30,7 +31,7 @@ export const Dashboard = () => {
       )}
 
       <section className="mt-3 w-full flex-0">
-        <Timeline />
+        <TimelineData />
       </section>
     </main>
   );

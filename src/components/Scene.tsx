@@ -6,7 +6,7 @@ import { AnimatedCamera } from './AnimatedCamera';
 import { Rack } from './Rack';
 import { DataContext } from '../shared/DataContext';
 import { ButtonsGroup } from '../shared/ButtonsGroup';
-import { boxSizeY, assetPositionZ, camMovement, boxSizeX } from '../shared/constants';
+import { boxSizeY, assetPositionZ, camMovementXY, boxSizeX, camMovementZ } from '../shared/constants';
 import { AssetDataType, Coords } from '../shared/types';
 
 export const Scene = () => {
@@ -64,7 +64,7 @@ export const Scene = () => {
   };
 
   const onResetPositionClick = () => {
-    setCamPosition(initCamPosition(boxNumberX, boxNumberY, canvasContainerRef.current?.offsetWidth || 0, canvasContainerRef.current?.offsetHeight || 0));
+    setCamPosition(initCamPosition(boxNumberX, boxNumberY, canvasContainerRef.current?.offsetWidth ?? 0, canvasContainerRef.current?.offsetHeight ?? 0));
     setCamTarget(initCamTarget(boxNumberX, boxNumberY));
   };
 
@@ -89,26 +89,26 @@ export const Scene = () => {
           {
             id: 'left',
             icon: <svg stroke="white" fill="white" strokeWidth="0" version="1.1" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M0.5 8l7.5 7.5v-4.5h8v-6h-8v-4.5z"></path></svg>,
-            onClick: () => onNavigateClick(-camMovement, 0, 0),
+            onClick: () => onNavigateClick(-camMovementXY, 0, 0),
           },
           {
             id: 'up',
             icon: <svg stroke="white" fill="white" strokeWidth="0" version="1.1" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M8 0.5l-7.5 7.5h4.5v8h6v-8h4.5z"></path></svg>,
-            onClick: () => onNavigateClick(0, 0, -camMovement),
+            onClick: () => onNavigateClick(0, 0, -camMovementZ),
           },
           {
             id: 'down',
             icon: <svg stroke="white" fill="white" strokeWidth="0" version="1.1" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M8 15.5l7.5-7.5h-4.5v-8h-6v8h-4.5z"></path></svg>,
-            onClick: () => onNavigateClick(0, 0, camMovement),
+            onClick: () => onNavigateClick(0, 0, camMovementZ),
           },
         ]}
         buttonRight={{
           id: 'right',
           icon: <svg stroke="white" fill="white" strokeWidth="0" version="1.1" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 8l-7.5-7.5v4.5h-8v6h8v4.5z"></path></svg>,
-          onClick: () => onNavigateClick(camMovement, 0, 0),
+          onClick: () => onNavigateClick(camMovementXY, 0, 0),
         }}
       />
-      <div ref={canvasContainerRef} id="canvas-container" className="my-2 w-full flex-1">
+      <div ref={canvasContainerRef} id="canvas-container" className="my-2 w-full flex-1 max-h-[calc(100vh-30rem)]">
         <Canvas>
           <ambientLight intensity={0.1} />
           {

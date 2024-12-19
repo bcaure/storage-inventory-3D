@@ -14,13 +14,14 @@ export type RackFrameProps = {
   boxNumberY: number;
 };
 
-export type AssetStateType = 'correct' | 'missing-fyt' | 'missing-ts' | 'product-fyt' | 'product-ts';
+export type AssetStateType = 'correct' | 'missing-fyt' | 'missing-ts' | 'product';
 
 export type AssetDataType = {
   id: string;
   name: string;
   coords: Coords;
   state: AssetStateType;
+  change: boolean;
   productCodeTracsphere?: string;
   productCodeFyt?: string;
   assetCodeTracksphere?: string;
