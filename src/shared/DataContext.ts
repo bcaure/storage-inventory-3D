@@ -1,14 +1,15 @@
-import { createContext, Dispatch } from "react";
-import { AssetDataType, TracksphereEvent } from "./types";
+import { createContext } from "react";
+import { DataContextType, RackType, TimelineDataType } from "./types";
 
-export const DataContext = createContext<{
-  events: TracksphereEvent[];
-  setEvents: Dispatch<React.SetStateAction<TracksphereEvent[]>> | undefined;
-  assets: AssetDataType[];
-  setAssets: Dispatch<React.SetStateAction<AssetDataType[]>> | undefined;
-}>({
-  events: new Array<TracksphereEvent>(),
-  setEvents: undefined,
-  assets: new Array<AssetDataType>(),
-  setAssets: undefined,
+export const DataContext = createContext<DataContextType>({
+  timelineData: new Array<TimelineDataType>(),
+  setTimelineData: () => {},
+  racks: new Array<RackType>(),
+  setRacks: () => {},
+  currentTimeData: undefined,
+  time: undefined,
+  setTime: () => {},
+  rackLetter: undefined,
+  setRackLetter: () => {},
+  currentRack: undefined,
 });

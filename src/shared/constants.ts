@@ -29,7 +29,8 @@ export const EVENTS: Array<TracksphereEvent> = [
     type: 'out',
     productCode: '30185',
     assetCode: '331854AAC000060000000034',
-    date: new Date(),
+    startDate: new Date(),
+    endDate: new Date(),
   },
   {
     id: '2',
@@ -37,7 +38,7 @@ export const EVENTS: Array<TracksphereEvent> = [
     type: 'out',
     productCode: '30185',
     assetCode: '331854AAC000060000000035',
-    date: new Date(),
+    startDate: new Date(),
   },
   {
     id: '3',
@@ -45,7 +46,7 @@ export const EVENTS: Array<TracksphereEvent> = [
     type: 'in',
     productCode: '30185',
     assetCode: '331854AAC000060000000036',
-    date: new Date(),
+    startDate: new Date(),
   },
   {
     id: '4',
@@ -53,6 +54,6 @@ export const EVENTS: Array<TracksphereEvent> = [
     type: 'in',
     productCode: '30185',
     assetCode: '331854AAC000060000000037',
-    date: new Date(),
+    startDate: new Date(),
   }
 ];
