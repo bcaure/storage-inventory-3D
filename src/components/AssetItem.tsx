@@ -7,7 +7,6 @@ import { useFrame, useLoader } from "@react-three/fiber";
 
 export const AssetItem = (props: AssetItemProps) => {
   const { coords: initCoords, name, state, change, selected, onClick } = props;
-  const textureRubber = useLoader(TextureLoader, 'rubber.png');
   const textureMetal = useLoader(TextureLoader, 'bobine-vue-de-face-2.png');
 
   const coords = useMemo(() => {
@@ -67,7 +66,7 @@ export const AssetItem = (props: AssetItemProps) => {
   const torusAnimFirstDelay = useRef<number>(0);
   const torusAnimSecondDelay = useRef<number>(0);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     torusAnimFirstDelay.current += delta;
     if (torusAnimFirstDelay.current > 1) {
       torusAnim.current = !torusAnim.current;
@@ -111,22 +110,7 @@ export const AssetItem = (props: AssetItemProps) => {
           color={color}
         />
       </mesh>
-
-      {/* <mesh ref={assetFront} position={[-boxSizeX / 2, -boxSizeY / 2, -coords[2]]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
-        { wheel }
-        <meshBasicMaterial
-          map={textureMetal}
-          color={color}
-        />
-      </mesh> */}
-      {/* <mesh position={[-boxSizeX / 2, -boxSizeY / 2, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
-        <cylinderGeometry args={[assetSizeDiam / 1.5, assetSizeDiam / 1.5, assetSizeHeight]} />
-        <meshBasicMaterial
-          map={textureRubber}
-          color={color}
-        />
-      </mesh> */}
-      
+     
       {text}
 
       {light}

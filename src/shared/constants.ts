@@ -31,7 +31,6 @@ export const EVENTS: Array<TracksphereEvent> = [
     productCode: '30185',
     assetCode: '331854AAC000060000000034',
     startDate: new Date(),
-    endDate: new Date(),
   },
   {
     id: '2',
