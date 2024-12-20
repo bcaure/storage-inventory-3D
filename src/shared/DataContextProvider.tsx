@@ -8,9 +8,6 @@ export const DataContextProvider = ({ children }: PropsWithChildren) => {
   const [time, setTime] = useState<Date>();
   const [rackLetter, setRackLetter] = useState<string>();
 
-
-  console.log("time", time);
-
   // Transform locations from Tracksphere to assets
   useEffect(() => {
     const fetchTimelineData = async () => {

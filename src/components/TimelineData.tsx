@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Card, Timeline } from "flowbite-react";
 import { DataContext } from "../shared/DataContext";
 import { TimelineDataType } from "../shared/types";
@@ -9,36 +9,36 @@ export const TimelineData = () => {
   const { timelineData, rackLetter, time, setTime } = useContext(DataContext);
   const dateString = useMemo(() => time?.toISOString().substring(0, 10), [time]);
 
-  const selectTime = (e: TimelineDataType) => {
+  const timeIndex = useRef<number>(0);
+  const selectTime = useCallback((e: TimelineDataType) => {
     setTime(e.date);
-  };
+    timeIndex.current = timelineData.findIndex((e1) => e1.date.getTime() === e.date.getTime());
+  }, [setTime, timelineData]);
+
+  console.log("time component", time?.getHours());
 
   const [playTrigger, setPlayTrigger] = useState(false);
+
   const interval = useRef<number>();
   useEffect(() => {
-    const findCurrentIndex = () => timelineData.findIndex((e) => {
-      return e.date.getTime() === time?.getTime();
-    });
-
-    const handleTimer = () => {
+    if (playTrigger && !interval.current) {
       interval.current = setInterval(() => {
-        const currentIndex = findCurrentIndex();
-        if (currentIndex >= 0 && currentIndex < timelineData.length - 1) {
-          setTime(timelineData[currentIndex + 1].date);
+        if (timeIndex.current < timelineData.length - 1) {
+          console.log("selectTime", timeIndex.current);
+          timeIndex.current += 1;
+          selectTime(timelineData[timeIndex.current]);
         } else {
+          console.log("stopTimeline");
           stopTimeline();
         }
-      }, 1000);
-    };
+      }, 2500);
+    }
 
-    const currentIndex = findCurrentIndex();
-    if ((currentIndex >= 0 && currentIndex > timelineData.length - 1 || !playTrigger) && interval.current) {
-      clearInterval(interval.current);
+    return () => {
+      console.log("stopTimeline2");
+      //clearInterval(interval.current);
     }
-    if (playTrigger && !interval.current) {
-      handleTimer();
-    }
-  }, [playTrigger, setTime, time, timelineData]);
+  }, [playTrigger, selectTime, timelineData]);
 
   const playTimeline = () => {
     setPlayTrigger(true);
@@ -46,6 +46,8 @@ export const TimelineData = () => {
 
   const stopTimeline = () => {
     setPlayTrigger(false);
+    clearInterval(interval.current);
+    interval.current = undefined;
   };
 
   return (
@@ -65,7 +67,7 @@ export const TimelineData = () => {
       </h5>
       <Timeline horizontal className="flex-1">
         { 
-          timelineData.map((e) => {
+          timelineData.map((e, index) => {
             const nbAlerts = rackLetter ?
               e.data
                 .filter((e) => e.name.startsWith(rackLetter))
@@ -75,7 +77,7 @@ export const TimelineData = () => {
 
             return (
               <Timeline.Item key={e.date.toISOString()} onClick={() => selectTime(e)} className="cursor-pointer">
-                <Timeline.Point icon={e.date === time ? GoDot : undefined} />
+                <Timeline.Point icon={index === timeIndex.current ? GoDot : undefined} />
                 <Timeline.Content>
                   <Timeline.Time>{e.date.toISOString().substring(11, 19)}</Timeline.Time>
                   <Timeline.Body>{nbAlerts} alert(s)</Timeline.Body>
