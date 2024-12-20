@@ -1,5 +1,10 @@
+default:
+  tags:
+    - k8s
+    - europe
+
 # The Docker image that will be used to build your app
-image: node:lts
+image: docker.artifactory.michelin.com/michelin/hub/node20-bullseye-slim-utils:bib-1.6
 # Functions that should be executed before the build script is run
 before_script:
   - npm ci
