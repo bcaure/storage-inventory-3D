@@ -6,9 +6,9 @@ import { useMemo, useRef } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 
 export const AssetItem = (props: AssetItemProps) => {
-  const { coords: initCoords, name, state, change, onClick } = props;
+  const { coords: initCoords, name, state, change, selected, onClick } = props;
   const textureRubber = useLoader(TextureLoader, 'rubber.png');
-  const textureMetal = useLoader(TextureLoader, 'metal-smooth.png');
+  const textureMetal = useLoader(TextureLoader, 'bobine-vue-de-face-2.png');
 
   const coords = useMemo(() => {
     const result = [...initCoords];
@@ -26,13 +26,13 @@ export const AssetItem = (props: AssetItemProps) => {
     onClick(props);
   };
 
-  let color: string | undefined = "gray";
+  let color: string | undefined = "#66CDAA";
 
   const frontCoords: Coords = [-boxSizeX / 2, -boxSizeY / 2, assetSizeHeight + 0.2];
 
   const reactAreaLight = <pointLight position={frontCoords} intensity={1000} color="#fff" castShadow />;
   let light = <></>;
-  const errorText = <Text position={frontCoords} color="white" fontSize={0.75}>{name}</Text>;
+  const errorText = <Text position={frontCoords} color="white" fontSize={0.5}>{name}</Text>;
   let text = <></>;
 
   switch(state) {
@@ -49,7 +49,16 @@ export const AssetItem = (props: AssetItemProps) => {
       break;
   }
 
-  if (props.selected) {
+  const selectedHighlight = (selected && !props.change) ? (
+      <mesh position={frontCoords}>
+        <torusGeometry args={[boxSizeX / 4 - 0.12, 0.05, 16, 48, Math.PI * 2]} />
+        <meshBasicMaterial color="white" />
+      </mesh>
+    ) : (
+      <></>
+    );
+
+  if (selected) {
     text = <Text position={frontCoords} color="white" fontSize={0.5}>{name}</Text>;
   }
 
@@ -82,7 +91,7 @@ export const AssetItem = (props: AssetItemProps) => {
     }
   });
 
-  const arrow = useMemo(() => change ? (
+  const changeHighlight = useMemo(() => change ? (
     <mesh position={frontCoords}>
       <torusGeometry ref={torusGeo} args={[boxSizeX / 4 + 0.05, 0.1, 16, 48, Math.PI * 2]} />
       <meshBasicMaterial color="#55F" />
@@ -122,7 +131,9 @@ export const AssetItem = (props: AssetItemProps) => {
 
       {light}
 
-      {arrow}
+      {selectedHighlight}
+
+      {changeHighlight}
     </group>
   );
 };

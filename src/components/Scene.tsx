@@ -8,6 +8,7 @@ import { DataContext } from '../shared/DataContext';
 import { ButtonsGroup } from '../shared/ButtonsGroup';
 import { boxSizeY, assetPositionZ, camMovementXY, boxSizeX, camMovementZ } from '../shared/constants';
 import { AssetDataType, Coords } from '../shared/types';
+import { AssetPanel } from './AssetPanel';
 
 export const Scene = () => {
   const dataContext = useContext(DataContext);
@@ -133,6 +134,7 @@ export const Scene = () => {
           }
         </Canvas>
       </div>
+      <AssetPanel asset={selectedAsset} openModal={!!selectedAsset} setOpenModal={() => setSelectedAsset(undefined)} />
     </div>
   );
 };

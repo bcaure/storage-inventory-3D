@@ -46,7 +46,7 @@ export const RackFrame = ({ coords, boxNumberX, boxNumberY, type }: RackFramePro
   return (
     <mesh position={position} receiveShadow>
       <boxGeometry args={[frameSizeX, frameSizeY, frameSizeZ]} />
-      <meshBasicMaterial map={texture} />
+      <meshBasicMaterial map={texture} color="#99A" />
     </mesh>
   );
 };
