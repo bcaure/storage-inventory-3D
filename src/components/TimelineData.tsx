@@ -63,7 +63,7 @@ export const TimelineData = () => {
 
       }
     }
-  }, [refs, selectTime, stopTimeline, timelineData]);
+  }, [selectTime, setResetTrigger, timelineData]);
 
 
   const interval = useRef<number>();
