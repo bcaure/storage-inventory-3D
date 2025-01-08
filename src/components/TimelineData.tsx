@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createRef, LegacyRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Card, Timeline } from "flowbite-react";
 import { DataContext } from "../shared/DataContext";
 import { TimelineDataType } from "../shared/types";
@@ -32,16 +32,38 @@ export const TimelineData = () => {
     stopTimeline();
   }, [stopTimeline]);
 
+  const refs = useRef<refArrayType>();
+  useEffect(() => {
+    refs.current = timelineData.reduce((acc, timelineItem) => {
+      acc[timelineItem.date.toISOString()] = createRef();
+      return acc;
+    }, {} as refArrayType);
+  }, [timelineData]);
 
   const playOneStep = useCallback(() => {
     if (timeIndex.current < timelineData.length - 1) {
       timeIndex.current += 1;
       selectTime(timelineData[timeIndex.current]);
     } else {
-      timeIndex.current = 0;
-      stopTimeline();
+      setResetTrigger(true);
     }
-  }, [selectTime, stopTimeline, timelineData]);
+
+    const currentElement = timelineData[timeIndex.current].date.toISOString();
+    if (currentElement && refs?.current?.[currentElement]) {
+      const ref = refs.current[currentElement] as LegacyRef<HTMLDivElement>;
+
+      //@ts-expect-error: Object is possibly 'null'.
+      if (ref?.current) {
+        //@ts-expect-error: Object is possibly 'null'.      
+        ref.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+        console.log('scrollIntoView');
+
+      }
+    }
+  }, [refs, selectTime, stopTimeline, timelineData]);
 
 
   const interval = useRef<number>();
@@ -61,8 +83,8 @@ export const TimelineData = () => {
   }, [isPlaying, resetTrigger, setResetTrigger, selectTime, stopTimeline, timelineData, playOneStep]);
 
   return (
-    <Card className="min-w-[500px] max-w-full h-[30vh] overflow-auto">
-      <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white flex gap-x-3">
+    <Card className="min-w-[500px] max-w-full h-[30vh] overflow-auto px-4">
+      <h5 className="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white flex gap-x-3 items-center sticky top-0 left-4 w-fit">
         {dateString}
         { !isPlaying && (
           <button className="text-gray-800 bg-gray-50 text-3xl flex items-center justify-center rounded-md w-7 h-7" onClick={onPlayClick}>
@@ -75,7 +97,7 @@ export const TimelineData = () => {
           </button>
         )}
       </h5>
-      <Timeline horizontal className="flex-1">
+      <Timeline horizontal>
         { 
           timelineData.map((e, index) => {
             const nbAlerts = rackLetter ?
@@ -85,12 +107,14 @@ export const TimelineData = () => {
               :
               0;
 
+            const ref = refs?.current?.[e.date.toISOString()];
+
             return (
               <Timeline.Item key={e.date.toISOString()} onClick={() => selectTime(e)} className="cursor-pointer">
                 <Timeline.Point icon={index === timeIndex.current ? GoDot : undefined} />
                 <Timeline.Content>
                   <Timeline.Time>{e.date.toISOString().substring(11, 19)}</Timeline.Time>
-                  <Timeline.Body>{nbAlerts} alert(s)</Timeline.Body>
+                  <Timeline.Body><div ref={ref}>{nbAlerts} alert(s)</div></Timeline.Body>
                 </Timeline.Content>
               </Timeline.Item>
             );
@@ -101,3 +125,4 @@ export const TimelineData = () => {
   );
 }
 
+type refArrayType = { [s: string]: LegacyRef<HTMLDivElement> };

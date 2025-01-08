@@ -27,7 +27,7 @@ export const AssetItem = (props: AssetItemProps) => {
 
   let color: string | undefined = "#66CDAA";
 
-  const frontCoords: Coords = [-boxSizeX / 2, -boxSizeY / 2, assetSizeHeight + 0.2];
+  const frontCoords: Coords = useMemo(() => [-boxSizeX / 2, -boxSizeY / 2, assetSizeHeight + 0.2], []);
 
   const reactAreaLight = <pointLight position={frontCoords} intensity={1000} color="#fff" castShadow />;
   let light = <></>;
