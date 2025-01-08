@@ -3,7 +3,7 @@ import { Card, Timeline } from "flowbite-react";
 import { DataContext } from "../shared/DataContext";
 import { TimelineDataType } from "../shared/types";
 import { GoDot } from "react-icons/go";
-import { FaPlay, FaStop } from "react-icons/fa";
+import { FaPause, FaPlay } from "react-icons/fa";
 
 export const TimelineData = () => {
   const { timelineData, rackLetter, time, setTime } = useContext(DataContext);
@@ -15,53 +15,63 @@ export const TimelineData = () => {
     timeIndex.current = timelineData.findIndex((e1) => e1.date.getTime() === e.date.getTime());
   }, [setTime, timelineData]);
 
-  console.log("time component", time?.getHours());
+  const {resetTrigger, setResetTrigger} = useContext(DataContext);
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  const stopTimeline = useCallback(() => {
+    clearInterval(interval.current);
+    interval.current = undefined;
+  }, []);
+  
+  const onPlayClick = () => {
+    setIsPlaying(true);
+  };
 
-  const [playTrigger, setPlayTrigger] = useState(false);
+  const onPauseClick = useCallback(() => {
+    setIsPlaying(false);
+    stopTimeline();
+  }, [stopTimeline]);
+
+
+  const playOneStep = useCallback(() => {
+    if (timeIndex.current < timelineData.length - 1) {
+      timeIndex.current += 1;
+      selectTime(timelineData[timeIndex.current]);
+    } else {
+      timeIndex.current = 0;
+      stopTimeline();
+    }
+  }, [selectTime, stopTimeline, timelineData]);
+
 
   const interval = useRef<number>();
   useEffect(() => {
-    if (playTrigger && !interval.current) {
-      interval.current = setInterval(() => {
-        if (timeIndex.current < timelineData.length - 1) {
-          console.log("selectTime", timeIndex.current);
-          timeIndex.current += 1;
-          selectTime(timelineData[timeIndex.current]);
-        } else {
-          console.log("stopTimeline");
-          stopTimeline();
-        }
-      }, 2500);
+    if (isPlaying) {
+      if (!interval.current) {
+        playOneStep();
+        interval.current = setInterval(playOneStep, 2500);
+      }
     }
-
-    return () => {
-      console.log("stopTimeline2");
-      //clearInterval(interval.current);
+    
+    if (resetTrigger){
+      timeIndex.current = 0;
+      setResetTrigger(false);
+      stopTimeline();
     }
-  }, [playTrigger, selectTime, timelineData]);
-
-  const playTimeline = () => {
-    setPlayTrigger(true);
-  };
-
-  const stopTimeline = () => {
-    setPlayTrigger(false);
-    clearInterval(interval.current);
-    interval.current = undefined;
-  };
+  }, [isPlaying, resetTrigger, setResetTrigger, selectTime, stopTimeline, timelineData, playOneStep]);
 
   return (
     <Card className="min-w-[500px] max-w-full h-[30vh] overflow-auto">
       <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white flex gap-x-3">
         {dateString}
-        { !playTrigger && (
-          <button className="text-gray-800 bg-gray-50 text-3xl flex items-center justify-center rounded-md w-7 h-7" onClick={playTimeline}>
+        { !isPlaying && (
+          <button className="text-gray-800 bg-gray-50 text-3xl flex items-center justify-center rounded-md w-7 h-7" onClick={onPlayClick}>
             <FaPlay className="w-4 h-4" />
           </button>
         )}
-        { playTrigger && (
-          <button className="text-gray-800 bg-gray-50 -text-3xl flex items-center justify-center rounded-md w-7 h-7" onClick={stopTimeline}>
-            <FaStop className="w-4 h-4" />
+        { isPlaying && (
+          <button className="text-gray-800 bg-gray-50 -text-3xl flex items-center justify-center rounded-md w-7 h-7" onClick={onPauseClick}>
+            <FaPause className="w-4 h-4" />
           </button>
         )}
       </h5>

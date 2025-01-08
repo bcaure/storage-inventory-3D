@@ -95,4 +95,6 @@ export type DataContextType = {
   rackLetter: string | undefined;
   setRackLetter: (a: string) => void;
   currentRack: RackType | undefined;
+  resetTrigger: boolean;
+  setResetTrigger: (a: boolean) => void;
 };

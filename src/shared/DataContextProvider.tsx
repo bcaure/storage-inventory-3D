@@ -7,6 +7,7 @@ export const DataContextProvider = ({ children }: PropsWithChildren) => {
   const [racks, setRacks] = useState<Array<RackType>>(new Array<RackType>());
   const [time, setTime] = useState<Date>();
   const [rackLetter, setRackLetter] = useState<string>();
+  const [resetTrigger, setResetTrigger] = useState(false);
 
   // Transform locations from Tracksphere to assets
   useEffect(() => {
@@ -59,7 +60,9 @@ export const DataContextProvider = ({ children }: PropsWithChildren) => {
     rackLetter,
     setRackLetter,
     currentRack,
-  }), [timelineData, racks, time, currentTimeData, rackLetter, currentRack]);
+    resetTrigger,
+    setResetTrigger,
+  }), [timelineData, racks, time, currentTimeData, rackLetter, currentRack, resetTrigger]);
 
   return (
     <DataContext.Provider value={dataContextValue}>

@@ -6,10 +6,11 @@ import { Scene } from "./Scene";
 import { TimelineData } from "./TimelineData";
 
 export const Dashboard = () => {
-  const { racks, rackLetter, setRackLetter } = useContext(DataContext);
+  const { racks, rackLetter, setRackLetter, setResetTrigger: setPlayTrigger } = useContext(DataContext);
 
   const onChangeLetterClick = (rackLetter: string) => {
     setRackLetter(rackLetter);
+    setPlayTrigger(false);
   };
 
   return (

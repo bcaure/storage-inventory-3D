@@ -12,4 +12,6 @@ export const DataContext = createContext<DataContextType>({
   rackLetter: undefined,
   setRackLetter: () => {},
   currentRack: undefined,
+  resetTrigger: false,
+  setResetTrigger: () => {},
 });
