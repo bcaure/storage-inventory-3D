@@ -21,15 +21,19 @@ export const Scene = () => {
   const initCamPosition = (rackSizeX: number | undefined, rackSizeY: number | undefined, canvasWidth: number, canvasHeight: number) => {
     if (rackSizeX && rackSizeY) {
       // Position the camera so it can show the whole rack
-      const canvaRatio = canvasWidth / canvasHeight;
-      const rackRatio = rackSizeX / rackSizeY;
-      if (rackRatio > canvaRatio) {
-        // rack width is the limiter
-        return [0, (rackSizeY * boxSizeY) / 2, (rackSizeX / canvaRatio) * 40] as Coords;
-      } else {
-        // rack height is the limiter
-        return [0, (rackSizeY * boxSizeY) / 2, (rackSizeY / canvaRatio) * 200] as Coords;
-      }
+      const z = 100;
+
+      // const canvaRatio = canvasWidth / canvasHeight;
+      // const rackRatio = rackSizeX / rackSizeY;
+      // if (rackRatio > canvaRatio) {
+      //   // rack width is the limiter
+      //   z = (rackSizeX / canvaRatio) * 40;
+      // } else {
+      //   // rack height is the limiter
+      //   z = (rackSizeY / canvaRatio) * 200;
+      // }
+
+      return [0, (rackSizeY * boxSizeY) / 2, z] as Coords;
     } else {
       throw new Error('Impossible to position camera without rack size');
     }
@@ -79,7 +83,7 @@ export const Scene = () => {
   };
 
   return (
-    <div className="my-2 flex flex-col justify-center items-center h-full w-full max-h-full truncate">
+    <div className="flex flex-col justify-center items-center h-full w-full max-h-full truncate">
       <ButtonsGroup
         buttonLeft={{
           id: 'reset',

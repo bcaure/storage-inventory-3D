@@ -33,13 +33,13 @@ export const AssetPanel = ({ asset, openModal, setOpenModal }: { asset: AssetDat
                 {(() => {
                   switch (asset?.state) {
                     case "correct":
-                      return <p className={`p-2 rounded bg-green-600 text-white`}>OK</p>;
+                      return <p className={`p-2 rounded bg-[#22755b] text-white`}>Conforme à FYT</p>;
                     case "missing-fyt":
-                      return <p className={`p-2 rounded bg-red-600 text-white`}>Empty in FYT</p>;
+                      return <p className={`p-2 rounded bg-[#760001] text-white`}>Devrait être vide (d'après FYT)</p>;
                     case "missing-ts":
-                      return <p className={`p-2 rounded bg-red-600 text-white`}>Not empty in FYT</p>;
+                      return <p className={`p-2 rounded bg-[#760001] text-white`}>Devrait être occupé (d'après FYT)</p>;
                     case "product":
-                      return <p className={`p-2 rounded bg-yellow-600 text-white`}>Product mismatch</p>;
+                      return <p className={`p-2 rounded bg-[#985700] text-white`}>Code produit différent dans FYT</p>;
                     default:
                       return null
                   }

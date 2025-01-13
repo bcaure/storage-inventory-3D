@@ -22,7 +22,7 @@ export const DataContextProvider = ({ children }: PropsWithChildren) => {
       const response = await fetch('/racks-cho.json');
       const responseRacks = await response.json() as Array<RackType>;
       setRacks(responseRacks);
-      setRackLetter(responseRacks[0].letter);
+      setRackLetter(responseRacks[1].letter);
     }
 
     fetchTimelineData();

@@ -1,9 +1,17 @@
 import { createRef, LegacyRef, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { Card, Timeline } from "flowbite-react";
+import { Card, CustomFlowbiteTheme, Flowbite, Timeline } from "flowbite-react";
 import { DataContext } from "../shared/DataContext";
 import { TimelineDataType } from "../shared/types";
 import { GoDot } from "react-icons/go";
 import { FaPause, FaPlay } from "react-icons/fa";
+
+const customTheme: CustomFlowbiteTheme = {
+    card: {
+      root: {
+        children: "p-0 flex-1 h-full flex flex-col",
+      }
+    }
+};
 
 export const TimelineData = () => {
   const { timelineData, rackLetter, time, setTime } = useContext(DataContext);
@@ -83,45 +91,49 @@ export const TimelineData = () => {
   }, [isPlaying, resetTrigger, setResetTrigger, selectTime, stopTimeline, timelineData, playOneStep]);
 
   return (
-    <Card className="min-w-[500px] max-w-full h-[30vh] overflow-auto px-4">
-      <h5 className="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white flex gap-x-3 items-center sticky top-0 left-4 w-fit">
-        {dateString}
-        { !isPlaying && (
-          <button className="text-gray-800 bg-gray-50 text-3xl flex items-center justify-center rounded-md w-7 h-7" onClick={onPlayClick}>
-            <FaPlay className="w-4 h-4" />
-          </button>
-        )}
-        { isPlaying && (
-          <button className="text-gray-800 bg-gray-50 -text-3xl flex items-center justify-center rounded-md w-7 h-7" onClick={onPauseClick}>
-            <FaPause className="w-4 h-4" />
-          </button>
-        )}
-      </h5>
-      <Timeline horizontal>
-        { 
-          timelineData.map((e, index) => {
-            const nbAlerts = rackLetter ?
-              e.data
-                .filter((e) => e.name.startsWith(rackLetter))
-                .reduce((cumul, current) => (cumul + (current.state !== 'correct' ? 1 : 0)), 0)
-              :
-              0;
+    <Flowbite theme={{ theme: customTheme }}>
+      <Card className="max-w-full min-h-[30vh] h-full truncate px-4 flex flex-col">
+        <h5 className="mt-2 mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white flex gap-x-3 items-center sticky top-0 left-[calc(50%-82px)] w-fit">
+          {dateString}
+          { !isPlaying && (
+            <button className="text-gray-800 bg-gray-50 text-3xl flex items-center justify-center rounded-md w-7 h-7" onClick={onPlayClick}>
+              <FaPlay className="w-4 h-4" />
+            </button>
+          )}
+          { isPlaying && (
+            <button className="text-gray-800 bg-gray-50 -text-3xl flex items-center justify-center rounded-md w-7 h-7" onClick={onPauseClick}>
+              <FaPause className="w-4 h-4" />
+            </button>
+          )}
+        </h5>
+        <div className="max-w-full flex-1 overflow-auto pt-5">
+          <Timeline horizontal>
+            { 
+              timelineData.map((e, index) => {
+                const nbAlerts = rackLetter ?
+                  e.data
+                    .filter((e) => e.name.startsWith(rackLetter))
+                    .reduce((cumul, current) => (cumul + (current.state !== 'correct' ? 1 : 0)), 0)
+                  :
+                  0;
 
-            const ref = refs?.current?.[e.date.toISOString()];
+                const ref = refs?.current?.[e.date.toISOString()];
 
-            return (
-              <Timeline.Item key={e.date.toISOString()} onClick={() => selectTime(e)} className="cursor-pointer">
-                <Timeline.Point icon={index === timeIndex.current ? GoDot : undefined} />
-                <Timeline.Content>
-                  <Timeline.Time>{e.date.toISOString().substring(11, 19)}</Timeline.Time>
-                  <Timeline.Body><div ref={ref}>{nbAlerts} alert(s)</div></Timeline.Body>
-                </Timeline.Content>
-              </Timeline.Item>
-            );
-          })
-        }
-      </Timeline>
-    </Card>
+                return (
+                  <Timeline.Item key={e.date.toISOString()} onClick={() => selectTime(e)} className="cursor-pointer">
+                    <Timeline.Point icon={index === timeIndex.current ? GoDot : undefined} />
+                    <Timeline.Content>
+                      <Timeline.Time>{e.date.toISOString().substring(11, 19)}</Timeline.Time>
+                      <Timeline.Body><div ref={ref}>{nbAlerts} alerte(s)</div></Timeline.Body>
+                    </Timeline.Content>
+                  </Timeline.Item>
+                );
+              })
+            }
+          </Timeline>
+        </div>
+      </Card>
+    </Flowbite>
   );
 }
 
